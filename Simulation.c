@@ -64,7 +64,7 @@ int main()
       return 1;
   }
 
-  fprintf(fp, "step,ex,ey,px,py\n");
+  fprintf(fp, "step,ex,ey,px,py,te,ke,pe\n");
   r = hypot(e1.x_position - p.x_position,e1.y_position-p.y_position);
 
   force = (k*p_charge*e_charge)/pow(r,2);
@@ -108,7 +108,7 @@ int main()
 
    total_energy = kinetic_energy + potential_energy;
 
-   fprintf(fp, "%lld,%.5e,%.5e,%.5e,%.5e\n", i, e1.x_position, e1.y_position, p.x_position, p.y_position);
+   fprintf(fp, "%lld,%.5e,%.5e,%.5e,%.5e,%.5e,%.5e,%.5e\n", i, e1.x_position, e1.y_position, p.x_position, p.y_position,total_energy,kinetic_energy,potential_energy);
 
    if (i % 500 == 0) {
         printf("%lld | %.3e | %.2f eV\n", i, r, total_energy / 1.602e-19);

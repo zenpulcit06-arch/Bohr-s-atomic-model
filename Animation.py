@@ -51,7 +51,7 @@ def update(frame):
 
     return electron_plot, proton_plot, te_plot ,electron_trail
 
-ani = FuncAnimation(fig,update,frames=range(0,len(df),50),interval=30,blit = True)
+ani = FuncAnimation(fig,update,frames=range(0,len(df),20),interval=30,blit = True)
 
 plt.tight_layout()
 plt.show()
