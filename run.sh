@@ -1,4 +1,7 @@
 #this is shell script run.sh
-gcc Simulation.c -o simulation 
-echo "1" | ./simulation
+#!/bin/bash
+gcc Simulation.c -o simulation
+echo "Enter orbit of electron"
+read orbit
+echo "$orbit" | ./simulation
 python Animation.py
