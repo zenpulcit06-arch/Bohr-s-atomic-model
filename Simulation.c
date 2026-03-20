@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "sim_essen/particle/particle.h"
+#include "sim_essen/acc_cal/acc.h"
 
 #define p_mass 1.67262193e-27
 #define e_mass 9.1093837e-31
@@ -51,15 +52,8 @@ int main()
   }
 
   fprintf(fp, "step,ex,ey,px,py,te,ke,pe\n");
-  r = hypot(e1.x_position - p.x_position,e1.y_position-p.y_position);
 
-  force = (k*p_charge*e_charge)/pow(r,2);
-
-  e1.ax = (force/e_mass)*((e1.x_position - p.x_position)/r);
-  e1.ay = (force/e_mass)*((e1.y_position - p.y_position)/r);
-
-  p.ax = (force/p_mass)*((p.x_position - e1.x_position)/r);
-  p.ay = (force/p_mass)*((p.y_position - e1.y_position)/r);
+  acc(&p,&e1,e_charge,p_charge);
    
 
   for (long long i = 0; i < steps; i++)
@@ -78,13 +72,7 @@ int main()
 
 
    r = hypot(e1.x_position - p.x_position,e1.y_position - p.y_position);
-   force = (k*p_charge*e_charge)/pow(r,2);
-
-   e1.ax = (force/e_mass)*((e1.x_position - p.x_position)/r);
-   e1.ay = (force/e_mass)*((e1.y_position - p.y_position)/r);
-
-   p.ax = (force/p_mass)*((p.x_position - e1.x_position)/r);
-   p.ay = (force/p_mass)*((p.y_position - e1.y_position)/r);
+   acc(&p,&e1,e_charge,p_charge);
    
    e1.vx += 0.5 * (e_ax_old + e1.ax) * dt;
     e1.vy += 0.5 * (e_ay_old + e1.ay) * dt;
@@ -123,14 +111,7 @@ int main()
       e1.vx = 0;
       e1.vy = 2.18e6/new_state;
 
-      r = hypot(e1.x_position - p.x_position, e1.y_position - p.y_position);
-      force = (k * p_charge * e_charge) / (r * r);
-
-      e1.ax = (force / e_mass) * ((e1.x_position - p.x_position) / r);
-      e1.ay = (force / e_mass) * ((e1.y_position - p.y_position) / r);
-
-      p.ax = (force / p_mass) * ((p.x_position - e1.x_position) / r);
-      p.ay = (force / p_mass) * ((p.y_position - e1.y_position) / r);
+      acc(&p,&e1,e_charge,p_charge);
 
     }
 
