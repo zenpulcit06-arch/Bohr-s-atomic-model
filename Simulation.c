@@ -5,6 +5,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
+#include "sim_essen/particle/particle.h"
 
 #define p_mass 1.67262193e-27
 #define e_mass 9.1093837e-31
@@ -12,30 +13,10 @@
 #define e_charge -1.60217663e-19
 #define k 8.98755e9
 
-struct proton
-{
-  double x_position;
-  double y_position;
-  double vx;
-  double vy;
-  double ax;
-  double ay;
-};
-
-struct electron {
-  double x_position;
-  double y_position;
-  double vx;
-  double vy;
-  double ax;
-  double ay;
-  int state;
-};
 
 int main()
 {
-  struct electron e1;
-  struct proton p;
+  struct particle e1,p;
 
   srand(time(NULL));
   double decay_const = 1e13;
