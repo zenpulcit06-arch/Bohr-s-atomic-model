@@ -59,7 +59,7 @@ int main()
 
   for (long long i = 0; i < steps; i++)
   {
-    double probability = 1 - exp( decay_const * dt);
+    double probability = 1 - exp( -decay_const * dt);
     double roll = (double)rand()/RAND_MAX;
 
     integratorfh(&p,&e1,dt);
