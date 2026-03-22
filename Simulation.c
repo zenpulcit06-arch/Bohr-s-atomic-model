@@ -14,15 +14,26 @@
 #define p_charge 1.60217663e-19
 #define e_charge -1.60217663e-19
 #define k 8.98755e9
+#define c 299792458
+#define h 6.62607015e-34
+
+struct photon
+         {
+  double x;
+  double E;
+  double lamda;
+};
 
 
 int main()
 {
   struct particle e1,p;
+  struct photon pht;
 
   srand(time(NULL));
   double decay_const = 1e13;
   int jumped = 0;
+  int photon = 0;
 
 
   printf("Enter state of electron\n");
@@ -36,10 +47,9 @@ int main()
   double potential_energy,kinetic_energy,total_energy;
   double r ;
   double angle ;
-  double dt = 1e-18;
+  double dt = 1e-19;
   double Time = 2e-15*pow(e1.state,3);
   long long steps = (long long)(Time/dt);
-  double force;
 
   e1.vx = 0;
   e1.vy = 2.18e6/e1.state;
@@ -53,6 +63,13 @@ int main()
   }
 
   fprintf(fp, "step,ex,ey,px,py,te,ke,pe\n");
+
+  FILE *phton = fopen("photon.csv","w");
+  if (phton == NULL){
+    printf("Error opening file\n");
+    return 1;
+  }
+  fprintf(phton,"x,E,wl\n");
 
   acc(&p,&e1,e_charge,p_charge);
    
@@ -94,21 +111,47 @@ int main()
 
       printf("Transition %d -> %d | Photon = %.2f eV \n",e1.state,new_state,photon_energy);
 
-      e1.state = new_state;
 
       r = 0.53e-10 * new_state*new_state;
-      e1.x_position = r;
-      e1.y_position = 0;
-      e1.vx = 0;
-      e1.vy = 2.18e6/new_state;
+      double r_old = hypot(e1.x_position - p.x_position,e1.y_position - p.y_position);
+      double v_old = hypot(e1.vx,e1.vy);
+      double v_new = 2.18e6/new_state;
+      double dx = e1.x_position - p.x_position;
+      double dy = e1.y_position - p.y_position;
+
+      e1.x_position = p.x_position + (r)/r_old*dx;
+      e1.y_position = p.y_position + (r)/r_old*dy;
+      e1.vx *= v_new / v_old;
+      e1.vy *= v_new/v_old;
 
       acc(&p,&e1,e_charge,p_charge);
+      photon = 1;
+      pht.x = e1.x_position;
+      pht.E = photon_energy;
+      pht.lamda = ((h*c)/(photon_energy*1.602e-19));
+      
+      e1.state = new_state;
+
 
     }
+
+    if (photon)
+    {
+      fprintf(phton,"%lf,%lf,%lf \n",pht.x,pht.E,pht.lamda);
+      if(pht.x >= 0 )
+      {
+        pht.x += 0.01*c*dt;
+      }
+      else {
+        pht.x -= 0.01*c*dt;
+      }
+    }
+
 
   }
   
   fclose(fp);
+  fclose(phton);
   printf("Simulation complete. Data saved to 'orbit.csv'.\n");
   return 0;
 }
