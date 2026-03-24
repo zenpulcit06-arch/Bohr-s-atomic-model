@@ -20,6 +20,7 @@
 struct photon
          {
   double x;
+  double y;
   double E;
   double lamda;
 };
@@ -69,7 +70,7 @@ int main()
     printf("Error opening file\n");
     return 1;
   }
-  fprintf(phton,"x,E,wl\n");
+  fprintf(phton,"x,y,E,wl,step\n");
 
   acc(&p,&e1,e_charge,p_charge);
    
@@ -80,8 +81,7 @@ int main()
     double roll = (double)rand()/RAND_MAX;
 
     integratorfh(&p,&e1,dt);
-
-
+  
    r = hypot(e1.x_position - p.x_position,e1.y_position - p.y_position);
    acc(&p,&e1,e_charge,p_charge);
    
@@ -94,12 +94,7 @@ int main()
    total_energy = kinetic_energy + potential_energy;
 
    fprintf(fp, "%lld,%.5e,%.5e,%.5e,%.5e,%.5e,%.5e,%.5e\n", i, e1.x_position, e1.y_position, p.x_position, p.y_position,total_energy,kinetic_energy,potential_energy);
-
-   if (i % 500 == 0) {
-        printf("%lld | %.3e | %.2f eV\n", i, r, total_energy / 1.602e-19);
-    }
-
-    if (!jumped && roll < probability && e1.state >1)
+ if (!jumped && roll < probability && e1.state >1)
     {
       jumped = 1;
       int new_state = e1.state -1;
@@ -127,6 +122,7 @@ int main()
       acc(&p,&e1,e_charge,p_charge);
       photon = 1;
       pht.x = e1.x_position;
+      pht.y = e1.y_position;
       pht.E = photon_energy;
       pht.lamda = ((h*c)/(photon_energy*1.602e-19));
       
@@ -137,16 +133,17 @@ int main()
 
     if (photon)
     {
-      fprintf(phton,"%lf,%lf,%lf \n",pht.x,pht.E,pht.lamda);
-      if(pht.x >= 0 )
-      {
-        pht.x += 0.01*c*dt;
-      }
-      else {
-        pht.x -= 0.01*c*dt;
-      }
+      fprintf(phton,"%.5e,%.5e,%.5e,%.5e,%lld \n",pht.x,pht.y,pht.E,pht.lamda,i);
+        pht.x +=0.1* c*dt;
+      
     }
 
+
+   if (i % 500 == 0) {
+        printf("%lld | %.3e | %.2f eV\n", i, r, total_energy / 1.602e-19);
+    }
+
+ 
 
   }
   
